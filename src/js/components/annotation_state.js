@@ -170,7 +170,6 @@ module.exports = class AnnotationState extends PlayerComponent {
     previewOnly = false,
     forceSnapToStart = false
   ) {
-    console.log("open annotation", annotation);
     if (!this.plugin.active) this.plugin.toggleAnnotationMode();
     this.skipLiveCheck = skipLiveCheck;
     this.clearActive();
