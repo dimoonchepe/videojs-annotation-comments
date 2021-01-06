@@ -64,7 +64,7 @@ module.exports = class PlayerUIComponent extends PlayerComponent {
   // Render a handlebars template with local data passed in via key/val in object
   renderTemplate(templateName, options = {}) {
     this.registerHandlebarsHelpers();
-    return templates[templateName](options);
+    return templates.src.templates[templateName](options);
   }
 
   // Handle escaped breaklines in Handlebars

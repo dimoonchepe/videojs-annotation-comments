@@ -105,7 +105,7 @@ module.exports = class AnnotationState extends PlayerComponent {
   // Set the live annotation based on current video time
   setLiveAnnotation() {
     if (!this.enabled) return;
-    const time = Math.floor(this.currentTime);
+    const time = this.currentTime;
 
     if (this.skipLiveCheck) {
       if (time !== this.lastVideoTime) this.skipLiveCheck = false;
@@ -170,12 +170,16 @@ module.exports = class AnnotationState extends PlayerComponent {
     previewOnly = false,
     forceSnapToStart = false
   ) {
+    console.log("open annotation", annotation);
     if (!this.plugin.active) this.plugin.toggleAnnotationMode();
     this.skipLiveCheck = skipLiveCheck;
     this.clearActive();
+    forceSnapToStart = forceSnapToStart || (annotation.range.start === annotation.range.stop);
     annotation.open(pause, previewOnly, forceSnapToStart);
     this.activeAnnotation = annotation;
-    this.lastVideoTime = this.activeAnnotation.range.start;
+    if (!annotation.range.stop) {
+      this.lastVideoTime = this.activeAnnotation.range.start;
+    }
   }
 
   // Open an annotation by ID (if it exists)
@@ -203,7 +207,7 @@ module.exports = class AnnotationState extends PlayerComponent {
       const nextInd = ind === this.annotations.length - 1 ? 0 : ind + 1;
       return this.openAnnotation(this.annotations[nextInd], true);
     }
-    const time = Math.floor(this.currentTime);
+    const time = this.currentTime;
     for (let i = 0; i < this.annotations.length; i++) {
       if (this.annotations[i].range.start > time)
         return this.openAnnotation(this.annotations[i], true);
@@ -218,7 +222,7 @@ module.exports = class AnnotationState extends PlayerComponent {
       const nextInd = ind === 0 ? this.annotations.length - 1 : ind - 1;
       return this.openAnnotation(this.annotations[nextInd], true);
     }
-    const time = Math.floor(this.currentTime);
+    const time = this.currentTime;
     for (let i = this.annotations.length - 1; i >= 0; i--) {
       if (this.annotations[i].range.start < time)
         return this.openAnnotation(this.annotations[i], true);

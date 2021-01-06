@@ -55,8 +55,9 @@ module.exports = {
   humanTime: range => {
     function readable(sec) {
       const mins = Math.floor(sec / 60);
-      const secs = String(sec % 60);
-      return `${mins}:${secs.length == 1 ? '0' : ''}${secs}`;
+      const secs = String(Math.floor(sec % 60));
+      const milisecs = String(Math.floor((sec % 60 % 1) * 1000));
+      return `${mins}:${secs.length == 1 ? '0' : ''}${secs}.${milisecs}`;
     }
     const time = [readable(range.start)];
     if (range.end) time.push(readable(range.end));

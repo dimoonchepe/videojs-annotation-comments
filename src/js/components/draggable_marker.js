@@ -72,7 +72,7 @@ module.exports = class DraggableMarker extends Marker {
   // On drag action, calculate new range and re-render marker
   onDrag(e) {
     const dragPercent = this.percentValFromXpos(e.pageX);
-    const secVal = parseInt(this.duration * dragPercent);
+    const secVal = this.duration * dragPercent;
 
     if (secVal > this.rangePin) {
       this.range = {

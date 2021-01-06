@@ -132,8 +132,8 @@ module.exports = class Controls extends PlayerUIComponent {
 
     // construct new range and create marker
     const range = {
-      start: parseInt(this.currentTime, 10),
-      stop: parseInt(this.currentTime, 10)
+      start: this.currentTime,
+      end: this.currentTime
     };
     this.marker = new DraggableMarker(this.player, range);
     this.selectableShape = new SelectableShape(this.player);

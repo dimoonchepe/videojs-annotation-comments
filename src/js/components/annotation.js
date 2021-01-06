@@ -58,7 +58,10 @@ module.exports = class Annotation extends PlayerUIComponent {
     this.isOpen = true;
     const snapToStart =
       forceSnapToStart ||
-      !Utils.isWithinRange(this.range.start, this.range.end, Math.floor(this.currentTime));
+      !Utils.isWithinRange(this.range.start, this.range.end, this.currentTime);
+    
+    if (withPause) this.player.pause();
+    if (snapToStart) this.currentTime = this.range.start;
 
     const showTooltip = previewOnly && this.plugin.options.showMarkerShapeAndTooltips;
     this.marker.setActive(showTooltip);
@@ -76,8 +79,7 @@ module.exports = class Annotation extends PlayerUIComponent {
       }
     }
 
-    if (withPause) this.player.pause();
-    if (snapToStart) this.currentTime = this.range.start;
+    
 
     this.plugin.fire('annotationOpened', {
       annotation: this.data,
@@ -101,8 +103,8 @@ module.exports = class Annotation extends PlayerUIComponent {
   // Values used to build timeMap in AnnotationState
   buildSecondsActiveArray() {
     const seconds = [];
-    if (this.range.end) {
-      for (let i = this.range.start; i <= this.range.end; i++) {
+    if (this.range.stop) {
+      for (let i = this.range.start; i <= this.range.stop; i++) {
         seconds.push(i);
       }
     } else {
@@ -126,7 +128,7 @@ module.exports = class Annotation extends PlayerUIComponent {
   // Build a new annotation instance by passing in data for range, shape, comment, & plugin ref
   static newFromData(range, shape, commentStr, plugin, id = null) {
     const comment = Comment.dataObj(commentStr, plugin);
-    if (range) range = Utils.parseIntObj(range);
+    //if (range) range = Utils.parseIntObj(range);
     if (shape) shape = Utils.parseIntObj(shape);
     const data = {
       id,
