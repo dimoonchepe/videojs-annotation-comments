@@ -168,23 +168,40 @@ module.exports = class AnnotationState extends PlayerComponent {
     skipLiveCheck = false,
     pause = true,
     previewOnly = false,
-    forceSnapToStart = false
+    forceSnapToStart = false,
+    hideOthers = true
   ) {
     if (!this.plugin.active) this.plugin.toggleAnnotationMode();
     this.skipLiveCheck = skipLiveCheck;
-    this.clearActive();
-    forceSnapToStart = forceSnapToStart || (annotation.range.start === annotation.range.stop);
-    annotation.open(pause, previewOnly, forceSnapToStart);
-    this.activeAnnotation = annotation;
-    if (!annotation.range.stop) {
-      this.lastVideoTime = this.activeAnnotation.range.start;
+    if (!annotation.isOpen) {
+      if (hideOthers) {
+        this.clearActive();
+      }
+      forceSnapToStart = forceSnapToStart || (annotation.range.start === annotation.range.stop);
+      annotation.open(pause, previewOnly, forceSnapToStart);
+      this.activeAnnotation = annotation;
+      if (!annotation.range.stop) {
+        this.lastVideoTime = this.activeAnnotation.range.start;
+      }
+    }
+  }
+
+  closeAnnotation(annotation) {
+    if (annotation.isOpen) {
+      annotation.close(false);
     }
   }
 
   // Open an annotation by ID (if it exists)
-  openAnnotationById(id) {
+  openAnnotationById(id, skipLiveCheck = false, pause = true, hideOthers = true) {
     const annotation = this.findAnnotation(id);
-    if (annotation) this.openAnnotation(annotation);
+    if (annotation) this.openAnnotation(annotation, skipLiveCheck, pause, false, false, hideOthers);
+  }
+
+  // Close an annotation by ID (if it exists)
+  closeAnnotationById(id, skipLiveCheck = false, pause = true, hideOthers = true) {
+    const annotation = this.findAnnotation(id);
+    if (annotation) this.closeAnnotation(annotation);
   }
 
   // Returns annotation object given ID

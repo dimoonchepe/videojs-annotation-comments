@@ -18,7 +18,12 @@ const Logger = require('./logger');
 const EventRegistry = {
   AnnotationState: {
     openAnnotation: (event, _this) => {
-      _this.openAnnotationById(event.detail.id);
+      const d = event.detail;
+      _this.openAnnotationById(d.id, d.skipLiveCheck, d.pause, d.hideOthers);
+    },
+    closeAnnotation: (event, _this) => {
+      const d = event.detail;
+      _this.closeAnnotationById(d.id, d.skipLiveCheck, d.pause, d.hideOthers);
     },
     closeActiveAnnotation: (event, _this) => {
       _this.clearActive();

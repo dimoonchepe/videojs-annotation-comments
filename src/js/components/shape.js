@@ -13,12 +13,22 @@ module.exports = class Shape extends PlayerUIComponent {
 
   // Draw the shape element on the $parent
   render() {
-    if (!this.shape) return;
-    if (this.$el) this.$el.remove();
-
     this.$el = $('<div/>').addClass('vac-shape');
-    this.setDimsFromShape();
     this.$parent.append(this.$el);
+    this.setDimsFromShape();
+  }
+
+  show() {
+    if (!this.shape) return;
+    if (!this.$el) { 
+      this.render();
+    }
+    this.$el.show();
+  }
+
+  hide() {
+    if (!this.shape || !this.$el) return;
+    this.$el.hide();
   }
 
   // Set/update the dimensions of the shape based  on this.shape

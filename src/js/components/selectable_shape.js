@@ -38,7 +38,7 @@ module.exports = class SelectableShape extends Shape {
       this.originY = shape.y1;
 
       // Draw shape and start drag state
-      this.render();
+      this.show();
       this.dragging = true;
       this.dragMoved = false; // used to determine if user actually dragged or just clicked
 

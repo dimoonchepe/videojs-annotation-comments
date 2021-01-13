@@ -70,7 +70,7 @@ module.exports = class Annotation extends PlayerUIComponent {
     }
 
     if (!previewOnly || (previewOnly && this.plugin.options.showMarkerShapeAndTooltips)) {
-      this.annotationShape.render();
+      this.annotationShape.show();
 
       if (this.shape) {
         this.annotationShape.$el.on('click.vac-annotation', () => {
@@ -94,7 +94,7 @@ module.exports = class Annotation extends PlayerUIComponent {
     this.marker.deactivate();
     this.commentList.teardown(false);
     if (this.annotationShape.$el) this.annotationShape.$el.off('click.vac-annotation');
-    this.annotationShape.teardown();
+    this.annotationShape.hide();
     if (clearActive) this.plugin.annotationState.clearActive();
     this.plugin.fire('annotationClosed', this.data);
   }
