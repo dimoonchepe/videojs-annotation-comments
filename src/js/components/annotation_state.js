@@ -56,7 +56,7 @@ module.exports = class AnnotationState extends PlayerComponent {
 
   // Bind events for setting liveAnnotation on video time change
   bindEvents() {
-    this.player.on('timeupdate', Utils.throttle(this.setLiveAnnotation.bind(this), 100));
+    // this.player.on('timeupdate', Utils.throttle(this.setLiveAnnotation.bind(this), 100));
   }
 
   // Sort annotations by range.start
@@ -76,7 +76,9 @@ module.exports = class AnnotationState extends PlayerComponent {
   // Create and add a annotation
   createAndAddAnnotation(data) {
     this.plugin.controls.uiState.adding && this.plugin.controls.cancelAddNew();
+    const range = {
 
+    };
     const annotation = Annotation.newFromData(
       data.range,
       data.shape,

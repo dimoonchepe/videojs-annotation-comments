@@ -30,8 +30,9 @@ module.exports = class SelectableShape extends Shape {
         y1: this.YCoordToPercent(e.pageY)
       };
       shape.x2 = shape.x1;
-      shape.y2 = shape.y2;
+      shape.y2 = shape.y1;
       this.shape = shape;
+      this.plugin.fire('addingAnnotationDataChanged', { shape: this.shape });
 
       // Save origin points for future use
       this.originX = shape.x1;
@@ -61,9 +62,7 @@ module.exports = class SelectableShape extends Shape {
       $(document).off(`mousemove.vac-sshape-${this.playerId}`);
 
       if (!this.dragMoved) {
-        // clear shape if it's just a click (and not a drag)
-        this.shape = null;
-        if (this.$el) this.$el.remove();
+        this.updateShape(e)
       }
 
       this.dragging = false;
@@ -78,7 +77,10 @@ module.exports = class SelectableShape extends Shape {
   // On each interation of drag action (mouse movement), recalc position and redraw shape
   onDrag(e) {
     this.dragMoved = true;
+    this.updateShape(e);
+  }
 
+  updateShape(e) {
     const xPer = this.xCoordToPercent(e.pageX);
     const yPer = this.YCoordToPercent(e.pageY);
 
@@ -97,7 +99,6 @@ module.exports = class SelectableShape extends Shape {
       this.shape.y1 = this.originY;
     }
     this.setDimsFromShape();
-
     this.plugin.fire('addingAnnotationDataChanged', { shape: this.shape });
   }
 
