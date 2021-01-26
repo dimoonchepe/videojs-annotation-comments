@@ -54,10 +54,9 @@ module.exports = class AnnotationState extends PlayerComponent {
     return this._annotations.map(a => a.data);
   }
 
-  // Bind events for setting liveAnnotation on video time change
+  // Bind events
   bindEvents() {
-    // this.player.on('timeupdate', Utils.throttle(this.setLiveAnnotation.bind(this), 100));
-  }
+  }  
 
   // Sort annotations by range.start
   sortAnnotations() {
@@ -69,7 +68,7 @@ module.exports = class AnnotationState extends PlayerComponent {
   // Add a new annotation
   addNewAnnotation(annotation) {
     this._annotations.push(annotation);
-    this.openAnnotation(annotation, true, true, false, true);
+    this.openAnnotation(annotation, true, false, true);
     this.stateChanged();
   }
 
@@ -131,7 +130,7 @@ module.exports = class AnnotationState extends PlayerComponent {
       if (liveStart === activeStart && liveStart === time) return;
     }
 
-    this.openAnnotation(liveAnnotation, false, false, true);
+    this.openAnnotation(liveAnnotation, false, true);
   }
 
   // Get all active annotations for a time (in seconds)
@@ -167,24 +166,19 @@ module.exports = class AnnotationState extends PlayerComponent {
   // skipLiveCheck will short circuit setLiveAnnotation()
   openAnnotation(
     annotation,
-    skipLiveCheck = false,
     pause = true,
     previewOnly = false,
     forceSnapToStart = false,
     hideOthers = true
   ) {
     if (!this.plugin.active) this.plugin.toggleAnnotationMode();
-    this.skipLiveCheck = skipLiveCheck;
+    this.skipLiveCheck = true;
     if (!annotation.isOpen) {
       if (hideOthers) {
         this.clearActive();
       }
-      forceSnapToStart = forceSnapToStart || (annotation.range.start === annotation.range.stop);
       annotation.open(pause, previewOnly, forceSnapToStart);
       this.activeAnnotation = annotation;
-      if (!annotation.range.stop) {
-        this.lastVideoTime = this.activeAnnotation.range.start;
-      }
     }
   }
 
@@ -195,13 +189,13 @@ module.exports = class AnnotationState extends PlayerComponent {
   }
 
   // Open an annotation by ID (if it exists)
-  openAnnotationById(id, skipLiveCheck = false, pause = true, hideOthers = true) {
+  openAnnotationById(id, pause = true, hideOthers = true) {
     const annotation = this.findAnnotation(id);
-    if (annotation) this.openAnnotation(annotation, skipLiveCheck, pause, false, false, hideOthers);
+    if (annotation) this.openAnnotation(annotation, pause, false, false, hideOthers);
   }
 
   // Close an annotation by ID (if it exists)
-  closeAnnotationById(id, skipLiveCheck = false, pause = true, hideOthers = true) {
+  closeAnnotationById(id) {
     const annotation = this.findAnnotation(id);
     if (annotation) this.closeAnnotation(annotation);
   }
@@ -223,14 +217,14 @@ module.exports = class AnnotationState extends PlayerComponent {
     if (this._activeAnnotation) {
       const ind = this.annotations.indexOf(this._activeAnnotation);
       const nextInd = ind === this.annotations.length - 1 ? 0 : ind + 1;
-      return this.openAnnotation(this.annotations[nextInd], true);
+      return this.openAnnotation(this.annotations[nextInd]);
     }
     const time = this.currentTime;
     for (let i = 0; i < this.annotations.length; i++) {
       if (this.annotations[i].range.start > time)
-        return this.openAnnotation(this.annotations[i], true);
+        return this.openAnnotation(this.annotations[i]);
     }
-    this.openAnnotation(this.annotations[0], true);
+    this.openAnnotation(this.annotations[0]);
   }
 
   // Finds the previous annotation in collection and opens it
@@ -238,14 +232,14 @@ module.exports = class AnnotationState extends PlayerComponent {
     if (this._activeAnnotation) {
       const ind = this.annotations.indexOf(this._activeAnnotation);
       const nextInd = ind === 0 ? this.annotations.length - 1 : ind - 1;
-      return this.openAnnotation(this.annotations[nextInd], true);
+      return this.openAnnotation(this.annotations[nextInd]);
     }
     const time = this.currentTime;
     for (let i = this.annotations.length - 1; i >= 0; i--) {
       if (this.annotations[i].range.start < time)
-        return this.openAnnotation(this.annotations[i], true);
+        return this.openAnnotation(this.annotations[i]);
     }
-    this.openAnnotation(this.annotations[this.annotations.length - 1], true);
+    this.openAnnotation(this.annotations[this.annotations.length - 1]);
   }
 
   // Use anywhere the annotation data changes

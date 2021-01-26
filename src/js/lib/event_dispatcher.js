@@ -19,7 +19,7 @@ const EventRegistry = {
   AnnotationState: {
     openAnnotation: (event, _this) => {
       const d = event.detail;
-      _this.openAnnotationById(d.id, d.skipLiveCheck, d.pause, d.hideOthers);
+      _this.openAnnotationById(d.id, d.pause, d.hideOthers);
     },
     closeAnnotation: (event, _this) => {
       const d = event.detail;
