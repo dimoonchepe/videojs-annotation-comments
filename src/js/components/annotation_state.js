@@ -68,7 +68,7 @@ module.exports = class AnnotationState extends PlayerComponent {
   // Add a new annotation
   addNewAnnotation(annotation) {
     this._annotations.push(annotation);
-    this.openAnnotation(annotation, true, false, true);
+    this.openAnnotation(annotation, false, false, true);
     this.stateChanged();
   }
 
