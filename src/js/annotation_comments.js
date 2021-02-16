@@ -60,7 +60,9 @@ module.exports = videojs => {
 
       this.controls = new Controls(this.player, this.options.bindArrowKeys);
       this.bindEvents();
-      this.setBounds(false);
+      this.setBounds(true);
+      this.annotationState.rescaleShapes();
+
       if (this.options.startInAnnotationMode) this.toggleAnnotationMode();
 
       this.pluginReady();
@@ -135,8 +137,34 @@ module.exports = videojs => {
       this.bounds.bottom = this.bounds.top + $player.height();
       this.bounds.bottomWithoutControls = this.bounds.bottom - $ctrls.height();
 
+      this.setVideoBounds();
+
       // fires an event when bounds have changed during resizing
       if (triggerChange) this.fire('playerBoundsChanged', this.bounds);
+    }
+
+    // sets bounds of a video frame in respect to its actual size
+    setVideoBounds() {
+      const videoEl = $(this.player.el()).find("video")[0];
+      this.videoSize = {
+        x: videoEl.videoWidth,
+        y: videoEl.videoHeight
+      }
+      const containerSize = {
+        x: this.bounds.right - this.bounds.left,
+        y: this.bounds.bottom - this.bounds.top
+      }
+      this.videoGap = {
+        x: Math.max((containerSize.x - containerSize.y * this.videoSize.x / this.videoSize.y) / 2, 0),
+        y: Math.max((containerSize.y - containerSize.x * this.videoSize.y / this.videoSize.x) / 2, 0)
+      }
+      this.videoBounds = {
+        left: Math.round(this.bounds.left + this.videoGap.x),
+        right: Math.round(this.bounds.right - this.videoGap.x),
+        top: Math.round(this.bounds.top + this.videoGap.y),
+        bottom: Math.round(this.bounds.bottom - this.videoGap.y)
+      };
+      this.annotationState.rescaleShapes();
     }
 
     // Public function to register a callback for when plugin is ready
@@ -172,7 +200,9 @@ module.exports = videojs => {
     }
 
     teardown() {
-      if (this.player) this.player.off('fullscreenchange');
+      if (this.player) {
+        this.player.off('fullscreenchange');
+      }
       $(window).off('resize.vac-window-resize');
     }
   };

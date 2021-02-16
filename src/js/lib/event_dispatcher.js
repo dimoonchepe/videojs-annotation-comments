@@ -41,6 +41,9 @@ const EventRegistry = {
     destroyComment: (event, _this) => {
       const comment = _this.findComment(event.detail.id);
       if (comment) comment.commentList.destroyComment(event);
+    },
+    rescaleShapes: (event, _this) => {
+      _this.updateBounds();
     }
   },
   Controls: {

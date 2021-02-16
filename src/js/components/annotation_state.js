@@ -156,6 +156,17 @@ module.exports = class AnnotationState extends PlayerComponent {
     this.annotationTimeMap = timeMap;
   }
 
+  rescaleShapes() {
+    this.annotations.forEach(annotation => {
+      annotation.annotationShape.setDimsFromShape();
+    });
+  }
+
+  updateBounds() {
+    this.plugin.setBounds(false);
+    this.rescaleShapes();
+  }
+
   // Close active annotation and remove reference in state
   clearActive() {
     this.activeAnnotation.close(false);

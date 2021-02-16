@@ -72,6 +72,8 @@ module.exports = class SelectableShape extends Shape {
         this.$player.find('.vac-cursor-tool-tip').removeClass('vac-cursor-dragging');
       }
     });
+
+    //window.onresize = this.getAbsoluteCoords.bind(this);
   }
 
   // On each interation of drag action (mouse movement), recalc position and redraw shape
@@ -98,7 +100,7 @@ module.exports = class SelectableShape extends Shape {
       this.shape.y2 = Math.min(100, yPer);
       this.shape.y1 = this.originY;
     }
-    this.setDimsFromShape();
+    this.setDimsFromShape(true);
     this.plugin.fire('addingAnnotationDataChanged', { shape: this.shape });
   }
 
