@@ -16,7 +16,9 @@ module.exports = class SelectableShape extends Shape {
   // Bind all needed events for drag action
   bindEvents() {
     // On mousedown initialize drag
-    this.$parent.on('mousedown.vac-selectable-shape', e => {
+    this.$parent.on('mousedown.vac-selectable-shape touchstart.vac-selectable-shape', e => {
+      
+
       // Check a few conditions to see if we should *not* start drag
       if (!$(e.target).hasClass('vac-video-cover-canvas')) return; // didn't click on overlay
       if ($(e.target).hasClass('vac-shape')) return; // user clicked on annotation
@@ -24,10 +26,12 @@ module.exports = class SelectableShape extends Shape {
       // Remove old shape if one existed
       if (this.$el) this.$el.remove();
 
+
+      const coordsSource = e.touches && e.touches.length > 0 ? e.touches[0] : e;
       // Define default starting shape (just x/y coords of where user clicked no width/height yet)
       const shape = {
-        x1: this.xCoordToPercent(e.pageX),
-        y1: this.YCoordToPercent(e.pageY)
+        x1: this.xCoordToPercent(coordsSource.pageX),
+        y1: this.YCoordToPercent(coordsSource.pageY)
       };
       shape.x2 = shape.x1;
       shape.y2 = shape.y1;
@@ -45,7 +49,7 @@ module.exports = class SelectableShape extends Shape {
 
       // Bind event on doc mousemove to track drag, throttled to once each 100ms
       $(document).on(
-        `mousemove.vac-sshape-${this.playerId}`,
+        `mousemove.vac-sshape-${this.playerId} touchmove.vac-sshape-${this.playerId}`,
         Utils.throttle(this.onDrag.bind(this), 100)
       );
 
@@ -56,10 +60,10 @@ module.exports = class SelectableShape extends Shape {
     });
 
     // On mouseup, if during drag cancel drag event listeners
-    $(document).on(`mouseup.vac-sshape-${this.playerId}`, e => {
+    $(document).on(`mouseup.vac-sshape-${this.playerId} touchend.vac-sshape-${this.playerId}`, e => {
       if (!this.dragging) return;
 
-      $(document).off(`mousemove.vac-sshape-${this.playerId}`);
+      $(document).off(`mousemove.vac-sshape-${this.playerId} touchmove.vac-sshape-${this.playerId}`);
 
       if (!this.dragMoved) {
         this.updateShape(e)
@@ -83,8 +87,9 @@ module.exports = class SelectableShape extends Shape {
   }
 
   updateShape(e) {
-    const xPer = this.xCoordToPercent(e.pageX);
-    const yPer = this.YCoordToPercent(e.pageY);
+    const coordsSource = e.touches && e.touches.length > 0 ? e.touches[0] : e;
+    const xPer = this.xCoordToPercent(coordsSource.pageX);
+    const yPer = this.YCoordToPercent(coordsSource.pageY);
 
     if (xPer < this.originX) {
       this.shape.x2 = this.originX;
@@ -120,8 +125,8 @@ module.exports = class SelectableShape extends Shape {
 
   // Unbind events and remove element
   teardown() {
-    this.$parent.off('mousedown.vac-selectable-shape');
-    $(document).off(`mouseup.vac-sshape-${this.playerId} mousemove.vac-sshape-${this.playerId}`);
+    this.$parent.off('mousedown.vac-selectable-shape touchstart.vac-selectable-shape');
+    $(document).off(`mouseup.vac-sshape-${this.playerId} touchend.vac-sshape-${this.playerId} mousemove.vac-sshape-${this.playerId} touchmove.vac-sshape-${this.playerId}`);
     super.teardown();
   }
 };
